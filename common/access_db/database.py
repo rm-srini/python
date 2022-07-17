@@ -7,3 +7,5 @@ class Database(ABC):
     @abstractmethod
     def get_connection_str(self):
         self.db_source
+
+
