@@ -1,7 +1,7 @@
 from common.parameters import Environment
 from common.access_db.sql_server import SqlServer
 
-db_scource = {
+db_source = {
     'sqlserver_investment_dev': {
         'env': Environment.Development,
         'type': SqlServer,
