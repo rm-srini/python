@@ -1,11 +1,12 @@
-import pyodbc
+# import Library
 import sqlalchemy
 import pandas as pd
 
+# import Local Library
 from common.access_db.connection_details import db_source
 
 
-class DB:
+class Database:
     def __init__(self, db_config):
         self.db_config = db_config
         self.con = sqlalchemy.create_engine(self.get_connection_str())
@@ -20,25 +21,4 @@ class DB:
         return pd.read_sql(query, self.con)
 
     def insert_records(self, df, table):
-        df.to_sql(table, con=self.con, if_exists='append', index_label='EquityTransactionKey')
-
-
-
-
-a = DB('sqlserver_investment_dev')
-mapping = {
-    'symbol': 'Symbol',
-    'isin': 'Isin',
-    'trade_date': 'TradeDate',
-    'exchange': 'Exchange',
-    'segment': 'Segment',
-    'series': 'Series',
-    'trade_type': 'TradeType',
-    'quantity': 'Quantity',
-    'price': 'Price',
-    'trade_id': 'TradeId',
-    'order_id': 'OrderId'
-}
-df = pd.read_csv(r'C:\Srini\Python\Finance\Feed\tradebook-YAA163-EQ.csv')
-df = df.rename(mapping)
-a.insert_records(df, 'EquityTransaction')
+        df.to_sql(table, con=self.con,  if_exists='append', index=False)
