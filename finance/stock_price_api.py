@@ -1,13 +1,11 @@
 import requests
 from ehp import *
-from pathlib import Path
 import pandas as pd
 
 
-
 class StockPriceApi:
-    def __init__(self):
-        self.config = config_values
+    def __init__(self, symbol: list):
+        self.symbol = symbol
         self.tran_df = pd.DataFrame()
 
     def api_call(self, symbol):
@@ -28,22 +26,9 @@ class StockPriceApi:
 
         return dict(zip(keys, values))
 
-    def ingest_transactions(self):
-        files = Path((self.config['transaction_file_path'])).glob('*.xlsx')
-        for file in files:
-            self.tran_df = pd.read_excel(file, skiprows=10)
-
-        print(self.tran_df)
-
-    def symbol_ratios(self):
-        symbol_df = pd.DataFrame()
-        for symbol in self.config['symbol_mapping']:
-            print(symbol)
+    def instrument_ratios(self) -> pd.DataFrame:
+        ratio_df = pd.DataFrame()
+        for symbol in self.symbol:
             dic = self.api_call(symbol)
-            symbol_df = symbol_df.append(dic, ignore_index=True)
-        symbol_df.to_csv('symbol.csv')
-
-
-a = PortfolioManagement()
-dic = a.symbol_ratios()
-print(dic)
+            ratio_df = ratio_df.append(dic, ignore_index=True)
+        return ratio_df

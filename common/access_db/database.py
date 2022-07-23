@@ -20,5 +20,5 @@ class Database:
     def get_query_output(self, query):
         return pd.read_sql(query, self.con)
 
-    def insert_records(self, df, table):
-        df.to_sql(table, con=self.con,  if_exists='append', index=False)
+    def insert_records(self, df, table, schema):
+        df.to_sql(table, con=self.con,  if_exists='append', index=False, schema=schema)
