@@ -65,17 +65,39 @@ class LoadTransaction:
                     })
                     position_df = pd.concat([position_df, buy_row], ignore_index=True)
 
-                    print(position_df)
                 if row['TradeType'] == 'sell':
-                    idx = position_df[(position_df['SellDate'].isna()) & (
-                                    position_df['BuyTime'] == position_df['BuyTime'].min())].index.values.astype(int)[0]
-                    dict = {
-                        'Symbol': row['Symbol'],
-                        'Quantity': row['Quantity'],
-                        'BuyDate': row['TradeDate'],
-                        'BuyPrice': row['Price']
-                    }
-                    position_df.append(dict, ignore_index=True)
+                    idx = position_df[(position_df['SellDate'].isna()) & (position_df['Symbol'] == row['Symbol']) &
+                        (position_df['BuyTime'] == position_df['BuyTime'].min())].index.values.astype(int)[0]
+
+                    if position_df.iloc[idx]['Quantity'] == row['Quantity']:
+                        position_df.at[idx, 'SellDate'] = row['TradeDate']
+                        position_df.at[idx, 'SellTime'] = row['OrderExecTime']
+                        position_df.at[idx, 'SellPrice'] = row['Price']
+
+                    elif position_df.iloc[idx]['Quantity'] > row['Quantity']:
+                        dict = {
+                                'Symbol': position_df.iloc[idx]['Symbol'],
+                                'Quantity': position_df.iloc[idx]['Quantity'] - row['Quantity'],
+                                'BuyDate': position_df.iloc[idx]['BuyDate'],
+                                'BuyTime': position_df.iloc[idx]['BuyTime'],
+                                'BuyPrice': position_df.iloc[idx]['BuyPrice'],
+                                'SellDate': np.NaN,
+                                'SellTime': np.NaN,
+                                'SellPrice': np.NaN,
+                                'Profit': np.NaN
+                        }
+                        position_df.append(dict, ignore_index=True)
+                        position_df.iloc[idx]['SellDate'] = row['TradeDate']
+                        position_df.iloc[idx]['SellTime'] = row['OrderExecTime']
+                        position_df.iloc[idx]['SellPrice'] = row['Price']
+
+                    elif position_df.iloc[idx]['Quantity'] < row['Quantity']:
+                        position_df.at[idx, 'SellDate'] = row['TradeDate']
+                        position_df.at[idx, 'SellTime'] = row['OrderExecTime']
+                        position_df.at[idx, 'SellPrice'] = row['Price']
+                        row['Quantity'] = row['Quantity'] - position_df.iloc[idx]['Quantity']
+                        df.append(row, ignore_index=True)
+
 
     def process_transaction(self):
         source_df = self.get_latest_transaction()
