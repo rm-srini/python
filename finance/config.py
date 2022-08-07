@@ -16,8 +16,14 @@ column_mapping = {
 position_columns = ['Symbol', 'Quantity', 'BuyDate', 'BuyTime', 'BuyPrice',
                     'SellDate', 'SellTime', 'SellPrice', 'Profit']
 
-db_source = 'sqlserver_investment_dev'
+exclude_symbol = ['MAFANG', 'MON100', 'NIFTYBEES', 'GOLDBEES', 'SGBJAN30IX-GB']
+
 source_file_path = r'C:\Users\rmsri_fk3ty4y\Downloads'
+
 source_file_name = r'tradebook-YAA163-EQ*.csv'
 
 target_path = r'C:\Srini\Finance'
+
+holdings_col_order = ['Symbol', 'Quantity', 'AvgPrice', 'InvestedAmount', 'CurrentPrice', 'CurrentValue', 'PNL',
+        'BookValue', 'StockPE', 'DividendYield', 'FaceValue', 'High', 'Low', 'MarketCap', 'ROCE',
+       'ROE' ]

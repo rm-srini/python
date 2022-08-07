@@ -4,18 +4,15 @@ import numpy as np
 import os
 import glob
 import datetime as dt
-import uuid
 from operator import itemgetter
 
 # Import Local Library
-from common.access_db.database import Database
 import finance.config as config
 from stock_price_api import StockPriceApi
 
 
 class LoadTransaction:
     def __init__(self):
-        self.db = Database(config.db_source)
         self.file_path = config.source_file_path
         self.file_name = config.source_file_name
         self.target_path = config.target_path
@@ -49,8 +46,7 @@ class LoadTransaction:
             ['_merge'], axis=1)
         return pd.concat([eqd_trans_df, new_rec_df])
 
-    def populate_position(self, instruments, transaction_df):
-        position_df = self.check_target_file('Position.xlsx', config.position_columns)
+    def populate_position(self, instruments, transaction_df, position_df):
         for instrument in instruments:
             df = transaction_df[transaction_df['Symbol'] == instrument]
             df.sort_values('OrderExecTime')
@@ -66,8 +62,10 @@ class LoadTransaction:
                     position_df = pd.concat([position_df, buy_row], ignore_index=True)
 
                 if row['TradeType'] == 'sell':
-                    idx = position_df[(position_df['SellDate'].isna()) & (position_df['Symbol'] == row['Symbol']) &
-                        (position_df['BuyTime'] == position_df['BuyTime'].min())].index.values.astype(int)[0]
+                    sr = position_df[(position_df['SellDate'].isna()) &
+                           (position_df['Symbol'] == row['Symbol'])]['BuyTime'] == position_df[(position_df['SellDate'].isna()) &
+                           (position_df['Symbol'] == row['Symbol'])]['BuyTime'].min()
+                    idx = sr[sr==True].index[0]
 
                     if position_df.iloc[idx]['Quantity'] == row['Quantity']:
                         position_df.at[idx, 'SellDate'] = row['TradeDate']
@@ -86,26 +84,46 @@ class LoadTransaction:
                                 'SellPrice': np.NaN,
                                 'Profit': np.NaN
                         }
-                        position_df.append(dict, ignore_index=True)
-                        position_df.iloc[idx]['SellDate'] = row['TradeDate']
-                        position_df.iloc[idx]['SellTime'] = row['OrderExecTime']
-                        position_df.iloc[idx]['SellPrice'] = row['Price']
+                        position_df = position_df.append(dict, ignore_index=True)
+                        position_df.at[idx, 'Quantity'] = row['Quantity']
+                        position_df.at[idx, 'SellDate'] = row['TradeDate']
+                        position_df.at[idx, 'SellTime'] = row['OrderExecTime']
+                        position_df.at[idx, 'SellPrice'] = row['Price']
 
                     elif position_df.iloc[idx]['Quantity'] < row['Quantity']:
                         position_df.at[idx, 'SellDate'] = row['TradeDate']
                         position_df.at[idx, 'SellTime'] = row['OrderExecTime']
                         position_df.at[idx, 'SellPrice'] = row['Price']
                         row['Quantity'] = row['Quantity'] - position_df.iloc[idx]['Quantity']
-                        df.append(row, ignore_index=True)
+                        df_new = pd.DataFrame()
+                        df_new = df_new.append(row, ignore_index=True)
+                        position_df = self.populate_position([instrument], df_new, position_df)
+        position_df['Profit'] = ((position_df['Quantity'] * position_df['SellPrice']) -
+                                        (position_df['Quantity'] * position_df['BuyPrice']))
+        return position_df
 
+    def get_current_holdings(self, position_df, ratio_df):
+        df = position_df[position_df['SellDate'].isna()][['Symbol', 'Quantity', 'BuyDate', 'BuyTime', 'BuyPrice']]
+        holdings_df = df.groupby(['Symbol'], as_index=False).sum(['Quantity', 'BuyPrice'])
+        holdings_df['AvgPrice'] = holdings_df['BuyPrice'] / holdings_df['Quantity']
+        holdings_df.drop(['BuyPrice'], axis=1, inplace=True)
+        holdings_df = holdings_df.merge(ratio_df, on='Symbol', how='inner')
+        holdings_df['InvestedAmount'] = holdings_df['Quantity'] * holdings_df['AvgPrice']
+        holdings_df['CurrentValue'] = holdings_df['Quantity'] * holdings_df['CurrentPrice']
+        holdings_df['PNL'] = holdings_df['CurrentValue'] - holdings_df['InvestedAmount']
+        return holdings_df[config.holdings_col_order]
 
     def process_transaction(self):
         source_df = self.get_latest_transaction()
         transaction_df = self.merge_transaction(source_df)
         instruments = transaction_df.Symbol.unique()
         ratio_df = StockPriceApi(instruments).instrument_ratios()
-        self.populate_position(instruments, transaction_df)
-        print(ratio_df)
+        position_df = self.check_target_file('Position.xlsx', config.position_columns)
+        position_df = self.populate_position(instruments, transaction_df, position_df)
+        holdings_df = self.get_current_holdings(position_df, ratio_df)
+        transaction_df.to_excel(self.target_path + '/EquityTransaction.xlsx')
+        position_df.to_excel(self.target_path + '/Position.xlsx')
+        holdings_df.to_excel(self.target_path + '/Holdings.xlsx')
 
 
 a = LoadTransaction()
