@@ -100,10 +100,12 @@ class LoadTransaction:
                         position_df = self.populate_position([instrument], df_new, position_df)
         position_df['Profit'] = ((position_df['Quantity'] * position_df['SellPrice']) -
                                         (position_df['Quantity'] * position_df['BuyPrice']))
+        position_df = position_df.astype(config.position_converter)
         return position_df
 
     def get_current_holdings(self, position_df, ratio_df):
-        df = position_df[position_df['SellDate'].isna()][['Symbol', 'Quantity', 'BuyDate', 'BuyTime', 'BuyPrice']]
+        df = position_df[position_df['SellDate'].isna()][['Symbol', 'Quantity', 'BuyPrice']]
+        df['BuyPrice'] = df['BuyPrice'] * df['Quantity']
         holdings_df = df.groupby(['Symbol'], as_index=False).sum(['Quantity', 'BuyPrice'])
         holdings_df['AvgPrice'] = holdings_df['BuyPrice'] / holdings_df['Quantity']
         holdings_df.drop(['BuyPrice'], axis=1, inplace=True)

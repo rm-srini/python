@@ -13,6 +13,11 @@ column_mapping = {
     'order_execution_time': 'OrderExecTime'
 }
 
+position_converter = {
+    'Symbol': 'object', 'Quantity': 'float64', 'BuyDate': 'object', 'BuyTime': 'object', 'BuyPrice': 'float64',
+    'SellDate': 'object', 'SellTime': 'object', 'SellPrice': 'float', 'Profit': 'float'
+}
+
 position_columns = ['Symbol', 'Quantity', 'BuyDate', 'BuyTime', 'BuyPrice',
                     'SellDate', 'SellTime', 'SellPrice', 'Profit']
 
