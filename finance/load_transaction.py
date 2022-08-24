@@ -53,7 +53,7 @@ class LoadTransaction:
             for index, row in df.iterrows():
                 if row['TradeType'] == 'buy':
                     buy_row = pd.DataFrame({
-                        'Symbol': [row['Symbol']],
+                        'Symbol': [row[ 'Symbol']],
                         'Quantity': [row['Quantity']],
                         'BuyDate': [row['TradeDate']],
                         'BuyTime': [row['OrderExecTime']],
