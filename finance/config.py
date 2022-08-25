@@ -1,3 +1,4 @@
+source_file_path = r'C:\Users\rmsri_fk3ty4y\Downloads'
 
 
 position_converter = {
@@ -10,7 +11,7 @@ position_columns = ['Symbol', 'Quantity', 'BuyDate', 'BuyTime', 'BuyPrice',
 
 exclude_symbol = ['MAFANG', 'MON100', 'NIFTYBEES', 'GOLDBEES', 'SGBJAN30IX-GB']
 
-source_file_path = r'C:\Users\rmsri_fk3ty4y\Downloads'
+
 
 source_file_name = [r'tradebook-YAA163-EQ*.csv', r'tradebook-YAA163-MF*.csv']
 
