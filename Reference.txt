@@ -1,6 +1,10 @@
 py -m pip install -r requirements.txt
+PYTHONUNBUFFERED=1;SPARK_HOME=C:\Spark\spark-3.3.0-bin-hadoop3
 
 Google Drive References
 https://www.projectpro.io/recipes/upload-files-to-google-drive-using-python#mcetoc_1g02b3q8jbc
 https://d35mpxyw7m7k7g.cloudfront.net/bigdata_1/Get+Authentication+for+Google+Service+API+.pdf
 https://pythonhosted.org/PyDrive/oauth.html#automatic-and-custom-authentication-with-settings-yaml
+
+Spark Setup
+https://phoenixnap.com/kb/install-spark-on-windows-10
