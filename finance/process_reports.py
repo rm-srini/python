@@ -1,4 +1,7 @@
 # Import Local Library
+import pandas as pd
+import numpy as np
+
 import finance.config as config
 from stock_price_api import StockPriceApi
 
@@ -19,6 +22,7 @@ screener_report = [
     'High',
     'Low',
     'MarketCap',
+    'MarketCapitalization',
     'ROCE',
     'ROE'
 ]
@@ -41,6 +45,21 @@ class ProcessReports:
         report = self.holdings_df.merge(ratio_df, on='Symbol', how='inner')
         report['CurrentValue'] = report['Quantity'] * report['CurrentPrice']
         report['PNL'] = report['CurrentValue'] - report['TotalCost']
-        report['PortfolioWeight'] = (100 * report['CurrentValue'] / report['CurrentValue'].sum(axis=0)).round(decimals=2)
+        report['MarketCapitalization'] = np.where(report['MarketCap'] < config.market_cap['SmallCap'], 'SmallCap',
+                                                  np.where(report['MarketCap'] < config.market_cap['MidCap'], 'MidCap', 'LargeCap'))
+
+        report['PortfolioWeight'] = (100 * report['CurrentValue'] / report['CurrentValue'].sum(axis=0)).round(
+            decimals=2)
         report = report[screener_report]
-        report.to_excel(self.target_path + '/ScreenerReport.xlsx', index=False, sheet_name='Portfolio')
+        stats_dict = {
+            'PortfolioValue': report['CurrentValue'].sum(axis=0),
+            'PortfolioPE': (report['CurrentValue'] * report['StockPE']).sum(axis=0) / report['CurrentValue'].sum(
+                axis=0),
+            'PortfolioROCE': (report['CurrentValue'] * report['ROCE']).sum(axis=0) / report['CurrentValue'].sum(axis=0)
+        }
+        stats_df = pd.DataFrame.from_dict(stats_dict, orient='index')
+        writer = pd.ExcelWriter(self.target_path + '/ScreenerReport.xlsx', engine='xlsxwriter')
+        stats_df.to_excel(writer, sheet_name='Summary', index=True)
+        report.to_excel(writer, sheet_name='Portfolio', index=False)
+        writer.save()
+        writer.close()

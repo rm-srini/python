@@ -4,3 +4,4 @@ pydrive
 openpyxl
 ehp
 pyspark
+xlsxwriter

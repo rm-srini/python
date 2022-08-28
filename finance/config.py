@@ -3,4 +3,8 @@ target_path = r'C:\Srini\Finance'
 
 exclude_symbol = ['MAFANG', 'MON100', 'NIFTYBEES', 'GOLDBEES', 'SGBJAN30IX-GB']
 
-
+market_cap = {
+    'LargeCap': 100000000000000,
+    'MidCap': 50000,
+    'SmallCap': 20000
+}
