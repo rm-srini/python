@@ -1,6 +1,8 @@
 # Import Library
+import os
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+from Google import Create_serv
 
 class AccessDrive:
 	def __init__(self):
@@ -12,13 +14,19 @@ class AccessDrive:
 		g_file = self.drive.CreateFile({'parents': [{'id': trg_folder_id}]})
 		g_file.SetContentFile(filename)
 		g_file.Upload()
+		os.remove(filename)
 
 	def get_file_list(self, trg_folder_id='1-LKhI8-on-BFBLsdYzdxzxmSAGigQl3i'):
 		file_list = self.drive.ListFile(
 			{'q': "'{}' in parents and trashed=false".format(trg_folder_id)}).GetList()
-		for file in file_list:
-			print('title: %s, id: %s' % (file['title'], file['id']))
 		return file_list
+
+	def check_files_exists(self, file_name):
+		file_list = self.get_file_list()
+		for file in file_list:
+			if file_name == file['title']:
+				return True
+		return False
 
 	def download_file(self, file_list):
 		for i, file in enumerate(sorted(file_list, key=lambda x: x['title']), start=1):
@@ -26,6 +34,6 @@ class AccessDrive:
 			file.GetContentFile(file['title'])
 
 a = AccessDrive()
-a.upload_file(r"C:\Users\rmsri_fk3ty4y\Desktop\Python_reference.txt")
+a.upload_file(r"test.txt")
 file_list = a.get_file_list()
 a.download_file(file_list)

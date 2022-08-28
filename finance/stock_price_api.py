@@ -27,6 +27,11 @@ class StockPriceApi:
                     keys.append(name.text().strip())
             for val in ind.find('span', ('class', 'number')):
                 values.append(val.text().strip())
+        for sec in dom.find('p', ('class', 'sub')):
+            for i in range(100):
+                for val in sec.find('a', ('href', '/company/compare/000000{num}/'.format(num=str(i).zfill(2)))):
+                    keys.append('Sector')
+                    values.append(val.text().strip())
         return dict(zip(keys, values))
 
     def instrument_ratios(self) -> pd.DataFrame:
@@ -39,13 +44,15 @@ class StockPriceApi:
                 ratio_df = ratio_df.append(dic, ignore_index=True)
         ratio_df = ratio_df[ratio_df['Current Price'] != '']
         ratio_df = ratio_df[ratio_df['Current Price'].notnull()]
-        ratio_df['BookValue'] = ratio_df['Book Value'].str.replace(',', '').astype(float)
-        ratio_df['CurrentPrice'] = ratio_df['Current Price'].str.replace(',', '').astype(float)
-        ratio_df['DividendYield'] = ratio_df['Dividend Yield'].str.replace(',', '').astype(float)
-        ratio_df['FaceValue'] = ratio_df['Face Value'].str.replace(',', '').astype(float)
-        ratio_df['High'] = ratio_df['High'].str.replace(',', '').astype(float)
-        ratio_df['Low'] = ratio_df['Low'].str.replace(',', '').astype(float)
-        ratio_df['MarketCap'] = ratio_df['Market Cap'].str.replace(',', '').astype(float)
-        ratio_df['StockPE'] = ratio_df['Stock P/E'].str.replace(',', '').astype(float)
+        ratio_df['BookValue'] = ratio_df['Book Value'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['CurrentPrice'] = ratio_df['Current Price'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['DividendYield'] = ratio_df['Dividend Yield'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['FaceValue'] = ratio_df['Face Value'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['High'] = ratio_df['High'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['Low'] = ratio_df['Low'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['MarketCap'] = ratio_df['Market Cap'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['StockPE'] = ratio_df['Stock P/E'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['ROCE'] = ratio_df['ROCE'].str.replace(',', '').astype(float).round(decimals=2)
+        ratio_df['ROE'] = ratio_df['ROE'].str.replace(',', '').astype(float).round(decimals=2)
         ratio_df.drop(['Book Value', 'Current Price', 'Dividend Yield', 'Market Cap', 'Stock P/E', 'Face Value'], axis=1, inplace=True)
         return ratio_df
