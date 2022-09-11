@@ -52,14 +52,14 @@ class ProcessReports:
             decimals=2)
         report = report[screener_report]
         stats_dict = {
-            'PortfolioValue': report['CurrentValue'].sum(axis=0),
-            'PortfolioPE': (report['CurrentValue'] * report['StockPE']).sum(axis=0) / report['CurrentValue'].sum(
-                axis=0),
-            'PortfolioROCE': (report['CurrentValue'] * report['ROCE']).sum(axis=0) / report['CurrentValue'].sum(axis=0)
+            'PortfolioValue': [report['CurrentValue'].sum(axis=0)],
+            'PortfolioPE': [(report['CurrentValue'] * report['StockPE']).sum(axis=0) / report['CurrentValue'].sum(
+                axis=0)],
+            'PortfolioROCE': [(report['CurrentValue'] * report['ROCE']).sum(axis=0) / report['CurrentValue'].sum(axis=0)]
         }
-        stats_df = pd.DataFrame.from_dict(stats_dict, orient='index')
+        stats_df = pd.DataFrame.from_dict(stats_dict)
         writer = pd.ExcelWriter(self.target_path + '/ScreenerReport.xlsx', engine='xlsxwriter')
-        stats_df.to_excel(writer, sheet_name='Summary', index=True)
+        stats_df.to_excel(writer, sheet_name='Summary', index=False)
         report.to_excel(writer, sheet_name='Portfolio', index=False)
         writer.save()
         writer.close()
