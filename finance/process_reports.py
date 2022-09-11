@@ -53,6 +53,8 @@ class ProcessReports:
         report = report[screener_report]
         stats_dict = {
             'PortfolioValue': [report['CurrentValue'].sum(axis=0)],
+            'PortfolioCost': [report['TotalCost'].sum(axis=0)],
+            'Return': [report['PNL'].sum(axis=0)],
             'PortfolioPE': [(report['CurrentValue'] * report['StockPE']).sum(axis=0) / report['CurrentValue'].sum(
                 axis=0)],
             'PortfolioROCE': [(report['CurrentValue'] * report['ROCE']).sum(axis=0) / report['CurrentValue'].sum(axis=0)]
