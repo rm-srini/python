@@ -50,6 +50,7 @@ class LoadTransaction:
         file = self.get_latest_file()
         if not file:
             raise Exception("Transaction file not available")
+        print('Processing file: '+ file)
         df = pd.read_csv(file)
         df.rename(column_mapping, inplace=True, axis=1)
         df = df.astype(dtype)

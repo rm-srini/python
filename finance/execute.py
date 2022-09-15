@@ -50,11 +50,11 @@ class Execute:
             else:
                 raise Exception("Position File doesn't exists, please process Position and then generate Holdings")
 
-        if 'ScreenerReport' in self.process_type:
+        if 'Report' in self.process_type:
             file = target_path + '/Holdings_RAW.xlsx'
             if os.path.exists(file):
                 holdings_df = pd.read_excel(file)
-                ProcessReports(holdings_df, 'Screener').process_reports()
+                ProcessReports(holdings_df).process_reports()
             else:
                 raise Exception("Holdings_RAW File doesn't exists, please process Holdings and then generate Report")
 
@@ -63,6 +63,6 @@ v_process_type = [
     'Transaction',
     'Position',
     'Holdings',
-    'ScreenerReport'
+    'Report'
 ]
 Execute(segments=v_segments, process_type=v_process_type).process()
