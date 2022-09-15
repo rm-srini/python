@@ -8,3 +8,8 @@ market_cap = {
     'MidCap': 50000,
     'SmallCap': 20000
 }
+
+etf_maping = {
+    'MON100': 'Motilal Oswal Nasdaq 100 ETF (MOFN100)',
+    'MAFANG': 'Mirae Asset NYSE FANG + ETF'
+}

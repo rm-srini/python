@@ -76,6 +76,10 @@ class ProcessReports:
         holdings_df = self.holdings_df[self.holdings_df['Segment'] == 'MF']
         instruments = holdings_df.Symbol.unique()
         nav_df = MfPriceApi(instruments).api_cal()
+        for key, val in config.etf_maping.items():
+            etf_df = self.holdings_df[self.holdings_df['Symbol'] == key]
+            etf_df['Segment'] = 'ETF'
+            holdings_df = pd.concat([holdings_df, etf_df])
         report = holdings_df.merge(nav_df, on='Symbol', how='inner')
         report['TotalCost'] = report['Quantity'] * report['AvgPrice']
         report['CurrentValue'] = report['Quantity'] * report['CurrentPrice']
