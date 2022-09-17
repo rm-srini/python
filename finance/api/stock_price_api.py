@@ -41,7 +41,7 @@ class StockPriceApi:
                 dic = self.api_call(symbol, True)
                 if dic['Current Price'] == '':
                     dic = self.api_call(symbol, False)
-                ratio_df = ratio_df.append(dic, ignore_index=True)
+                ratio_df = pd.concat([ratio_df, pd.DataFrame.from_dict([dic])])
         ratio_df = ratio_df[ratio_df['Current Price'] != '']
         ratio_df = ratio_df[ratio_df['Current Price'].notnull()]
         ratio_df['BookValue'] = ratio_df['Book Value'].str.replace(',', '').astype(float).round(decimals=2)

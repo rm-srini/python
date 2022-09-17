@@ -41,7 +41,7 @@ class ProcessReports:
         equity_df['Segment'] = 'EQ'
         mf_df = self.mf_report()
         consolidated_df = pd.concat([equity_df, mf_df])
-        consolidated_df.to_excel(self.target_path + '/ConsolidatedReport.xlsx', index=False)
+        consolidated_df.to_excel(self.target_path + '/ConsolidatedReport.xlsx', index=False, sheet_name='ConsolidatedReport')
 
     def equity_report(self):
         holdings_df = self.holdings_df[self.holdings_df['Segment'] == 'EQ']
