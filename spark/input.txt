@@ -1,0 +1,3 @@
+Name,Salary
+John,1000
+Peter,1002
