@@ -1,4 +1,6 @@
-
+'''
+Piece of code to get two inputs and find if there is a relationship exists between the two
+'''
 d =   [
     {'B': 'A'},
     {'C': 'A'},
@@ -8,9 +10,6 @@ d =   [
     {'F': 'E'}
     # #{'Employee': 'F', 'Manager': 'E'}
     ]
-
-
-
 
 def get_parent(emp):
     for i in d:
@@ -24,10 +23,9 @@ def fun(emp1, emp2):
         parent = get_parent(parent)
         if parent != None:
             lst.append(parent)
-
         else:
-            return lst
             break
+    return lst
 
 def get_hierarchy(emp1,emp2):
     lst = fun(emp1, emp2)
@@ -36,6 +34,4 @@ def get_hierarchy(emp1,emp2):
     else:
         return False
 
-
-
-print(get_hierarchy('A', 'X'))
+print(get_hierarchy('A', 'F'))
