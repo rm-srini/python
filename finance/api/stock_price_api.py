@@ -35,6 +35,7 @@ class StockPriceApi:
         return dict(zip(keys, values))
 
     def instrument_ratios(self) -> pd.DataFrame:
+        print('Fetching Stock Price from Screener')
         ratio_df = pd.DataFrame()
         for symbol in self.symbol:
             if symbol not in config.exclude_symbol:

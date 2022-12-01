@@ -69,7 +69,7 @@ class ProcessReports:
         stats_df.to_excel(writer, sheet_name='Summary', index=False)
         report.to_excel(writer, sheet_name='Portfolio', index=False)
         writer.save()
-        writer.close()
+        #writer.close()
         return report
 
     def mf_report(self):
@@ -78,7 +78,9 @@ class ProcessReports:
         nav_df = MfPriceApi(instruments).api_cal()
         for key, val in config.etf_maping.items():
             etf_df = self.holdings_df[self.holdings_df['Symbol'] == key]
-            etf_df['Segment'] = 'ETF'
+            etf_df = etf_df.reset_index(drop=True)
+            # etf_df['Segment'] = 'ETF'
+            etf_df.loc[0:, 'Segment'] = 'ETF'
             holdings_df = pd.concat([holdings_df, etf_df])
         report = holdings_df.merge(nav_df, on='Symbol', how='inner')
         report['TotalCost'] = report['Quantity'] * report['AvgPrice']

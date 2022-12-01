@@ -30,11 +30,13 @@ class Execute:
         self.process_type = process_type
 
     def process(self):
+        print('Loading Transactions...')
         if 'Transaction' in self.process_type:
             for segment in self.segments:
                 LoadTransaction(segment).process_transaction()
 
         if 'Position' in self.process_type:
+            print('Calculating Position...')
             file = target_path + '/Transaction.xlsx'
             if os.path.exists(file):
                 transaction_df = pd.read_excel(file)
@@ -43,6 +45,7 @@ class Execute:
                 raise Exception("Transaction File doesn't exists, please process Transaction and then generate Position")
 
         if 'Holdings' in self.process_type:
+            print('Calculating Holdings...')
             file = target_path + '/Position.xlsx'
             if os.path.exists(file):
                 position_df = pd.read_excel(file)
@@ -51,6 +54,7 @@ class Execute:
                 raise Exception("Position File doesn't exists, please process Position and then generate Holdings")
 
         if 'Report' in self.process_type:
+            print('Generating Report...')
             file = target_path + '/Holdings_RAW.xlsx'
             if os.path.exists(file):
                 holdings_df = pd.read_excel(file)

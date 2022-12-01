@@ -75,7 +75,8 @@ class CalculatePosition():
                         position_df.at[idx, 'SellPrice'] = row['Price']
                         row['Quantity'] = row['Quantity'] - position_df.iloc[idx]['Quantity']
                         df_new = pd.DataFrame()
-                        df_new = df_new.append(row, ignore_index=True)
+                        #df_new = df_new.append(row, ignore_index=True)
+                        df_new = pd.concat([df_new, row.to_frame().T], ignore_index=True)
                         position_df = self.populate_position([instrument], df_new, position_df)
         position_df['Profit'] = ((position_df['Quantity'] * position_df['SellPrice']) -
                                         (position_df['Quantity'] * position_df['BuyPrice']))

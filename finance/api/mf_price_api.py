@@ -28,6 +28,7 @@ class MfPriceApi:
         return self.schemes_dict
 
     def api_cal(self):
+        print('Fetching mutual fund NAV')
         self.get_api_url(self.symbols, 'mf')
         self.get_api_url(etf_maping, 'etf')
         nav_dict = {'Symbol': [], 'CurrentPrice': []}
