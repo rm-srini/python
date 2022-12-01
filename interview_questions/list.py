@@ -12,6 +12,7 @@ for k in dic:
 '''
 Print the number nearest to zero in below list
 '''
+# Solution 1
 lst = [5, 2, -6, -7, -1, 10, 3]
 diff = 10000000000
 num = 0
@@ -21,5 +22,5 @@ for i in range(len(lst)):
         num=lst[i]
 print(num)
 
-
+# Solution 2
 print(min(lst, key=abs))

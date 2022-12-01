@@ -1,7 +1,8 @@
 '''
 Piece of code to get two inputs and find if there is a relationship exists between the two
 '''
-d =   [
+# Solution 1
+d = [
     {'B': 'A'},
     {'C': 'A'},
     {'D': 'B'},
@@ -35,3 +36,35 @@ def get_hierarchy(emp1,emp2):
         return False
 
 print(get_hierarchy('A', 'F'))
+
+
+
+# Solution 2
+d = {
+    'A': None,
+    'B': 'A',
+    'C': 'A',
+    'D': 'B',
+    'X': 'D',
+    'Y': 'X',
+    'E': None,
+    'F': 'E'
+}
+lst = []
+def get_parents(emp):
+    if emp in d:
+        lst.append(d[emp])
+    if d[emp] is None:
+        return lst
+    e = d[emp]
+    return get_parents(e)
+
+def validate(manager, employee):
+    lst = get_parents(employee)
+    if manager in lst:
+        result = True
+    else:
+        result = False
+    return result
+
+print(validate('A', 'F'))
