@@ -1,6 +1,10 @@
 # Import Local Library
 import pandas as pd
 import numpy as np
+from operator import itemgetter
+import glob
+import datetime as dt
+import os
 
 import finance.config as config
 from finance.api.stock_price_api import StockPriceApi
@@ -46,6 +50,10 @@ class ProcessReports:
     def equity_report(self):
         holdings_df = self.holdings_df[self.holdings_df['Segment'] == 'EQ']
         instruments = holdings_df.Symbol.unique()
+        # tt = self.process_tickertape_file()
+        # ticker_tape_df = holdings_df.merge(tt, left_on='Symbol', right_on='Ticker', how='inner')
+        # ticker_tape_df = ticker_tape_df[ticker_tape_df['Segment'] == 'EQ']
+        # ticker_tape_df['CP PE'] = ticker_tape_df['AvgPrice'] / ticker_tape_df['Earnings Per Share']
         ratio_df = StockPriceApi(instruments).instrument_ratios()
         report = holdings_df.merge(ratio_df, on='Symbol', how='inner')
         report['CurrentValue'] = report['Quantity'] * report['CurrentPrice']
@@ -68,6 +76,7 @@ class ProcessReports:
         writer = pd.ExcelWriter(self.target_path + '/EquityReport.xlsx', engine='xlsxwriter')
         stats_df.to_excel(writer, sheet_name='Summary', index=False)
         report.to_excel(writer, sheet_name='Portfolio', index=False)
+        # ticker_tape_df.to_excel(writer, sheet_name='TickerTape', index=False)
         writer.save()
         #writer.close()
         return report
@@ -88,3 +97,13 @@ class ProcessReports:
         report['PNL'] = report['CurrentValue'] - report['TotalCost']
         report.to_excel(self.target_path + '/MutualFundReport.xlsx', index=False)
         return report
+
+    def process_tickertape_file(self):
+        files = []
+        all_files = glob.glob(config.source_file_path + '/' + 'New_Screen_*')
+        for file in all_files:
+            mdt = dt.datetime.utcfromtimestamp(os.stat(file).st_mtime)
+            files.append({'file_name': file, 'md_time': mdt})
+        file = sorted(files, key=itemgetter('md_time'), reverse=True)[0]['file_name'] if len(files) > 0 else []
+        return pd.read_csv(file)
+

@@ -5,3 +5,6 @@ openpyxl
 ehp
 pyspark
 xlsxwriter
+streamlit
+plotly
+altair
