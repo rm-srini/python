@@ -45,16 +45,21 @@ class LoadTransaction:
         self.file_path = config.source_file_path
         self.file_name = 'tradebook-*-MF*.csv' if segment == 'MF' else 'tradebook-*-EQ*.csv'
         self.target_path = config.target_path
+        self.eqd_trans_df = pd.DataFrame(columns=column_mapping.values())
+        self.eqd_trans_df = self.eqd_trans_df.astype(dtype)
 
     def get_latest_transaction(self) -> pd.DataFrame:
-        file = self.get_latest_file()
-        if not file:
+        files = self.get_latest_file()
+        lst_df = []
+        if files == []:
             raise Exception("Transaction file not available")
-        print('Processing file: '+ file)
-        df = pd.read_csv(file)
-        df.rename(column_mapping, inplace=True, axis=1)
-        df = df.astype(dtype)
-        return df
+        for file in files:
+            print('Processing file: ' + file['file_name'])
+            df = pd.read_csv(file['file_name'])
+            df.rename(column_mapping, inplace=True, axis=1)
+            df = df.astype(dtype)
+            lst_df.append(df)
+        return lst_df
 
     def get_latest_file(self) -> list:
         files = []
@@ -62,23 +67,18 @@ class LoadTransaction:
         for file in all_files:
             mdt = dt.datetime.utcfromtimestamp(os.stat(file).st_mtime)
             files.append({'file_name': file, 'md_time': mdt})
-        return sorted(files, key=itemgetter('md_time'), reverse=True)[0]['file_name'] if len(files) > 0 else []
+        return sorted(files, key=itemgetter('md_time'), reverse=False)
 
-    def merge_transaction(self, source_df) -> pd.DataFrame:
-        eqd_trans_df = self.check_target_file('Transaction.xlsx', column_mapping.values())
-        eqd_trans_df = eqd_trans_df.astype(dtype)
-        new_rec_df = pd.merge(eqd_trans_df, source_df, how='outer', indicator=True).query('_merge=="right_only"').drop(
-            ['_merge'], axis=1)
-        return pd.concat([eqd_trans_df, new_rec_df])
+    def merge_transaction(self, lst_df) -> pd.DataFrame:
+        self.check_target_file('Transaction.xlsx')
+        self.eqd_trans_df = pd.concat(lst_df)
 
-    def check_target_file(self, file_name, df_columns):
+
+    def check_target_file(self, file_name):
         if os.path.isfile(self.target_path + '/' + file_name):
-            target_df = pd.read_excel(self.target_path + '/' + file_name)
-        else:
-            target_df = pd.DataFrame(columns=df_columns)
-        return target_df
+            os.remove(self.target_path + '/' + file_name)
 
     def process_transaction(self):
-        df = self.get_latest_transaction()
-        df = self.merge_transaction(df)
-        df.to_excel(self.target_path + '/Transaction.xlsx', index=False)
+        lst_df = self.get_latest_transaction()
+        df = self.merge_transaction(lst_df)
+        self.eqd_trans_df.to_excel(self.target_path + '/Transaction.xlsx', index=False)
