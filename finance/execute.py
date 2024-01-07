@@ -62,7 +62,7 @@ class Execute:
             else:
                 raise Exception("Holdings_RAW File doesn't exists, please process Holdings and then generate report")
 
-v_segments = ['EQ','MF']
+v_segments = ['EQ']#,'MF']
 v_process_type = [
     'Transaction',
     'Position',
