@@ -1,6 +1,5 @@
 # Import Library
 import pandas as pd
-from pandasgui import show
 
 # Import Local Library
 from finance.load_transactions import LoadTransaction
