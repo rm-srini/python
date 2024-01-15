@@ -1,7 +1,6 @@
 # Import Library
 import pandas as pd
 from pandasgui import show
-import streamlit as st
 
 # Import Local Library
 from finance.load_transactions import LoadTransaction
@@ -45,7 +44,7 @@ class HoldingsReport(LoadTransaction):
         self.load_holdings_df()
         self.api_call()
         self.claculations()
-        st.dataframe(self.df)
+        return self.df, self.calc_dict
 
 
 
