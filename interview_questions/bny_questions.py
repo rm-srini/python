@@ -16,24 +16,23 @@ def perform_operation(num: int, val: str, opr: str):
         num = num / int(val)
     return num
 
-def simple_calculate(exp: str):
+def simple_calculate(exp: str, num=0):
     lst = exp.split()
     opr = lst[-1]
-    num = 0
     for i in range(len(lst)-1):
         num = perform_operation(num, lst[i], opr)
     return num
 
 
-#print(simple_calculate('5 6 8 1 +'))
-#print(simple_calculate('5 6 8 1 +'))
+print(simple_calculate('5 6 8 1 +'))
+print(simple_calculate('5 6 1 +'))
 
 """
 Question 2: Similar to previous question only difference is that the number and
 operator can be mixed together for example '2 5 + 8 * 4 10 +' for this case
 it should work like (0 + 2 + 5) * 8 + (4 + 10) = 94
 """
-def complex_calculator(exp: str):
+def complex_calculator_sol1(exp: str):
     lst = exp.split()
     cnt = 0
     lst_dic = []
@@ -56,4 +55,19 @@ def complex_calculator(exp: str):
     return num
 
 
-print(complex_calculator('2 5 + 4 10 + 2 * 10 2 - 3 /'))
+print(complex_calculator_sol1('2 5 + 4 10 + 2 * 10 2 -'))
+
+
+def complex_calculator_sol2(exp: str):
+    start = 0
+    end = 0
+    num = 0
+    for pos in range(0, len(exp)):
+        if exp[pos] in ['+', '-', '*', '/']:
+            end = pos + 1
+            num = simple_calculate(exp[start: end], num)
+            start = end + 1
+    return num
+
+
+print(complex_calculator_sol2('2 5 + 4 10 + 2 * 10 2 -'))
