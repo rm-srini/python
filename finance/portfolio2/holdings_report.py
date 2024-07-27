@@ -47,5 +47,3 @@ class HoldingsReport(LoadTransaction):
 
 
 
-df = HoldingsReport().main()
-print(df)
