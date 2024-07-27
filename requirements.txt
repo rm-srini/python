@@ -8,3 +8,7 @@ xlsxwriter
 streamlit
 plotly
 altair
+pandasgui
+openai
+nltk
+pytest
