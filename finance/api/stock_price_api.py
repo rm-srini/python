@@ -38,6 +38,7 @@ class StockPriceApi:
         print('Fetching Stock Price from Screener')
         ratio_df = pd.DataFrame()
         for symbol in self.symbol:
+            print('Fetching price for ' + symbol)
             if symbol not in config.exclude_symbol:
                 dic = self.api_call(symbol, True)
                 if 'Current Price' in dic.keys():
