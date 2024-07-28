@@ -2,7 +2,7 @@
 Question 1: A String with number separated by space will be passed to a method
 and an operator will be present at the end like '5 12 3 +', based on the
 operator we need to add/subtract these number 0 + 5 + 12 + 3 = 20
-Similarly for '2 9 - ' it should be 0 - 2 - 9 = 11
+Similarly for '2 9 - ' it should be 0 - 2 - 9 = -11
 """
 
 def perform_operation(num: int, val: str, opr: str):
