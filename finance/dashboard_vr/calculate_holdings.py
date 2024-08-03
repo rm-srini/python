@@ -1,5 +1,5 @@
 # Import Local Library
-import finance.config as config
+import finance.dashboard_vr.config as config
 
 
 class CalculateHoldings:

@@ -7,7 +7,7 @@ import numpy as np
 from operator import itemgetter
 
 # Import Local Library
-import finance.config as config
+import finance.dashboard_vr.config as config
 
 column_mapping = {
     'symbol': 'Symbol',

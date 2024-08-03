@@ -1,7 +1,7 @@
 import requests
 from ehp import *
 import pandas as pd
-import finance.config as config
+import finance.dashboard_vr.config as config
 
 
 class StockPriceApi:

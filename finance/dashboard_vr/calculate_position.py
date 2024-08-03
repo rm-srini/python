@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 # Import Local Library
-import finance.config as config
+import finance.dashboard_vr.config as config
 
 position_converter = {
     'Symbol': object,

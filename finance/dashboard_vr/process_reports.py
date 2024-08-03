@@ -6,9 +6,9 @@ import glob
 import datetime as dt
 import os
 
-import finance.config as config
-from finance.api.stock_price_api import StockPriceApi
-from finance.api.mf_price_api import MfPriceApi
+import finance.dashboard_vr.config as config
+from finance.dashboard_vr.api.stock_price_api import StockPriceApi
+from finance.dashboard_vr.api.mf_price_api import MfPriceApi
 
 
 screener_report = [

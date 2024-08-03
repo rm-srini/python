@@ -2,8 +2,8 @@
 import pandas as pd
 
 # Import Local Library
-from finance.load_transactions import LoadTransaction
-from finance.api.stock_price_api import StockPriceApi
+from finance.dashboard_vr.load_transactions import LoadTransaction
+from finance.dashboard_vr.api.stock_price_api import StockPriceApi
 
 class HoldingsReport(LoadTransaction):
     def __init__(self):

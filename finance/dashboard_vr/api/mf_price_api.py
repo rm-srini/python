@@ -3,8 +3,8 @@ import requests
 import pandas as pd
 
 # Import internal Library
-from finance.api.mf_reference import mf_api_map
-from finance.config import etf_maping
+from finance.dashboard_vr.api.mf_reference import mf_api_map
+from finance.dashboard_vr.config import etf_maping
 
 class MfPriceApi:
     def __init__(self, symbols: list):
