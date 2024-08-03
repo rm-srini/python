@@ -2,12 +2,12 @@
 import pandas as pd
 
 # Local Libraries
-from get_stock_info import GetStockInfo
+from get_ticker_info import GetTickerInfo
 
 
-class FilterStocks:
+class TickerFilter:
     def __init__(self):
-        self.GetStockInfo = GetStockInfo()
+        self.get_ticker_info = GetTickerInfo()
 
     def filter_all_time_high(self, symbol: str, df_price_list: pd.DataFrame):
         dict = {'symbol': symbol, 'high': 0, 'count': 0}
@@ -18,11 +18,14 @@ class FilterStocks:
 
         return dict
 
-    def iterate_stocks(self):
-        df_price_list = self.GetStockInfo.get_hist_price("EQUITASBNK.NS")
-        print(self.filter_all_time_high("EQUITASBNK.NS", df_price_list))
+    def main(self):
+        df_stock_list = pd.read_json(r'config\stock_list.json')
+        for idx, row in df_stock_list.iterrows():
+            df_price_list = self.get_ticker_info.get_hist_price(row['ISIN Code'])
+            print(self.filter_all_time_high(row["Symbol"], df_price_list))
 
 
 if __name__ == "__main__":
-    a = FilterStocks()
-    a.iterate_stocks()
+    a = TickerFilter()
+    a.main()
+
