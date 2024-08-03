@@ -12,3 +12,4 @@ pandasgui
 openai
 nltk
 pytest
+yfinance
